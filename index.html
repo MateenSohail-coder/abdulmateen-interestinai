@@ -494,5 +494,339 @@
       });
     });
   </script>
+  <!-- EmailJS CDN -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  
+  <!-- MBZUAI Verification Modal -->
+  <div id="mbzuaiModal" class="mbzuai-modal">
+    <div class="mbzuai-modal-content">
+      <div class="mbzuai-modal-header">
+        <i class="fas fa-university"></i>
+        <h3>MBZUAI Verification</h3>
+      </div>
+      <p class="mbzuai-question">Are you from MBZUAI?</p>
+      <div class="mbzuai-buttons">
+        <button id="noBtn" class="btn-no"><i class="fas fa-times"></i> No</button>
+        <button id="yesBtn" class="btn-yes"><i class="fas fa-check"></i> Yes</button>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+    /* Professional Glassmorphism Modal - Matches your yellow theme */
+    .mbzuai-modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 10, 10, 0.9);
+      backdrop-filter: blur(10px);
+      animation: fadeIn 0.3s ease;
+    }
+  
+    .mbzuai-modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  
+    .mbzuai-modal-content {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(244, 196, 48, 0.3);
+      border-radius: 24px;
+      padding: 2.5rem;
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(244, 196, 48, 0.2);
+      animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  
+    .mbzuai-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+  
+    .mbzuai-modal-header i {
+      font-size: 2rem;
+      color: #f4c430;
+    }
+  
+    .mbzuai-modal-header h3 {
+      margin: 0;
+      background: linear-gradient(90deg, #f4c430, #ffeb3b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+  
+    .mbzuai-question {
+      font-size: 1.3rem;
+      color: #fff8d0;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+  
+    .mbzuai-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  
+    .btn-yes,
+    .btn-no {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+  
+    .btn-yes {
+      background: linear-gradient(135deg, #f4c430, #ffeb3b);
+      color: #1a1a2e;
+      box-shadow: 0 10px 25px rgba(244, 196, 48, 0.4);
+      min-width: 120px;
+      justify-content: center;
+    }
+  
+    .btn-yes:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(244, 196, 48, 0.6);
+    }
+  
+    .btn-yes:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+  
+    .loader {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(26, 26, 46, 0.3);
+      border-top: 2px solid #1a1a2e;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+  
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+  
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  
+    /* Success Message */
+    .success-message {
+      display: none;
+      animation: successSlide 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  
+    .success-message.show {
+      display: block;
+    }
+  
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, #f4c430, #ffeb3b);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 40px rgba(244, 196, 48, 0.4);
+      position: relative;
+    }
+  
+    .success-icon::after {
+      content: '✓';
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      position: absolute;
+    }
+  
+    .success-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #f4c430, #ffeb3b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+  
+    .success-text {
+      color: #fff8d0;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+  
+    @keyframes successSlide {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+  
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+  
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+  
+      to {
+        opacity: 1;
+      }
+    }
+  
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+  
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+  
+    @media (max-width: 480px) {
+      .mbzuai-buttons {
+        flex-direction: column;
+      }
+  
+      .mbzuai-modal-content {
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
+  
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+      const modal = document.getElementById('mbzuaiModal');
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
+      const buttonsContainer = document.querySelector('.mbzuai-buttons');
+      const loader = document.createElement('div');
+      loader.className = 'loader';
+
+      modal.style.display = 'flex';
+      modal.classList.add('active');
+
+      // Add loader to yes button
+      yesBtn.appendChild(loader);
+
+      emailjs.init('BZQqbdWREnMt2Fdet');
+
+      noBtn.onclick = () => {
+        modal.style.display = 'none';
+        modal.classList.remove('active');
+      };
+
+      yesBtn.onclick = async () => {
+        const serviceID = 'service_rek14hk';
+        const templateID = 'template_m3sqjwa';
+
+        const params = {
+          from_name: 'MBZUAI Visitor',
+          from_email: 'nothing@mbzuai.com',
+          message: `A verified MBZUAI visitor accessed Abdul Mateen's MBZUAI Video Statement page on ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' })}`
+        };
+
+        // Show loader & disable button
+        yesBtn.disabled = true;
+        loader.style.display = 'block';
+        yesBtn.innerHTML = '<span style="opacity:0.7;">Sending...</span>';
+
+        try {
+          const response = await emailjs.send(serviceID, templateID, params);
+          console.log('SUCCESS:', response.status, response.text);
+
+          // Hide buttons, show success message
+          buttonsContainer.style.display = 'none';
+
+          const successMsg = `
+              <div class="success-message show">
+                <div class="success-icon"></div>
+                <div class="success-title">Success!</div>
+                <div class="success-text">MBZUAI notification sent successfully. Thank you!</div>
+              </div>
+            `;
+
+          modal.innerHTML = successMsg;
+
+          // Auto close after 3 seconds
+          setTimeout(() => {
+            modal.style.display = 'none';
+            modal.classList.remove('active');
+          }, 3000);
+
+        } catch (error) {
+          console.error('Full EmailJS error:', error);
+
+          // Reset button
+          yesBtn.disabled = false;
+          loader.style.display = 'none';
+          yesBtn.innerHTML = '<i class="fas fa-check"></i> Yes';
+
+          // Show error toast (fallback)
+          const errorMsg = document.createElement('div');
+          errorMsg.style.cssText = `
+              position: fixed; top: 20px; right: 20px; background: rgba(255,0,0,0.95);
+              color: white; padding: 1rem 1.5rem; border-radius: 10px; z-index: 10001;
+              backdrop-filter: blur(10px); font-weight: 500; max-width: 300px;
+            `;
+          errorMsg.textContent = `Error ${error.status}: ${error.text}`;
+          document.body.appendChild(errorMsg);
+
+          setTimeout(() => errorMsg.remove(), 4000);
+        }
+      };
+
+      // ESC / outside close (only before success)
+      window.onclick = (event) => {
+        if (event.target === modal && !modal.querySelector('.success-message')) {
+          modal.style.display = 'none';
+        }
+      };
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.querySelector('.success-message')) {
+          modal.style.display = 'none';
+        }
+      });
+    });
+  </script>
+
 </body>
 </html>
